@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: Аудиал, Визуал, Кинестетик</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .quiz-section {
+            display: block;
+        }
+
+        .question {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .question:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .answer-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .answer-btn {
+            flex: 1;
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .answer-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .answer-btn.selected-yes {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .answer-btn.selected-no {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .result-category {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .result-category:nth-child(2) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .result-category:nth-child(3) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .result-category h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .result-score {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .answers-review {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .answers-review h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .answer-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .answer-item.answer-yes {
+            border-left: 4px solid #28a745;
+        }
+
+        .answer-item.answer-no {
+            border-left: 4px solid #dc3545;
+        }
+
+        .answer-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .answer-badge.yes {
+            background: #28a745;
+            color: white;
+        }
+
+        .answer-badge.no {
+            background: #dc3545;
+            color: white;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .tag-audial {
+            background: #f093fb;
+            color: white;
+        }
+
+        .tag-visual {
+            background: #4facfe;
+            color: white;
+        }
+
+        .tag-kinesthetic {
+            background: #43e97b;
+            color: white;
+        }
+
+        .restart-btn {
+            width: 100%;
+            padding: 15px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.02);
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Тест: Аудиал, Визуал, Кинестетик</h1>
+
+        <div id="quizSection" class="quiz-section">
+            <div id="questionsContainer"></div>
+            <button id="submitBtn" class="submit-btn" onclick="calculateResults()">Показать результаты</button>
+        </div>
+
+        <div id="resultsSection" class="results-section">
+            <div id="resultsContainer"></div>
+            <div class="answers-review">
+                <h3>Ваши ответы:</h3>
+                <div id="answersReview"></div>
+            </div>
+            <button class="restart-btn" onclick="restartQuiz()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            "люблю наблюдать за облаками и звёздами",
+            "часто напеваю себе под нос",
+            "не признаю неудобную моду",
+            "обожаю ходить в сауну",
+            "в автомобиле для меня важен его цвет",
+            "узнаю по шагах, кто вошёл в комнату",
+            "меня развлекает копировать чей-то диалект",
+            "много времени уделяю своей внешности",
+            "очень люблю массаж",
+            "когда есть время, люблю рассматривать людей",
+            "плохо себя чувствую, когда не наслаждаюсь ходьбой",
+            "рассматривая какую-то одежду в магазине, я убеждён, что мне в ней будет хорошо",
+            "когда слушаю старую мелодию, вспоминаю прошлое",
+            "часто читаю во время еды",
+            "очень часто говорю по телефону",
+            "я считаю, что у меня есть склонность к полноте",
+            "отдаю предпочтение прослушиванию книги, чем самостоятельному прочтению",
+            "после сложного дня моё тело находится в напряжении",
+            "с удовольствием и очень много фотографирую",
+            "долго помню, что мне сказали друзья и знакомые",
+            "с лёгкостью отдаю деньги за цветы, потому что они украшают жизнь",
+            "вечером люблю принимать горячую ванну",
+            "стараюсь записывать свои дела",
+            "часто разговариваю сам с собой",
+            "после длительной поездки в машине долго прихожу в себя",
+            "по тембру голоса я могу многое узнать о человеке",
+            "очень часто оцениваю людей по манере одеваться",
+            "люблю потянуться, расправить плечи, размяться во время работы",
+            "слишком жёсткая или мягкая кровать – мучение для меня",
+            "мне нелегко найти удобную обувь",
+            "очень люблю ходить в кино",
+            "могу узнать человека в лицо даже через много лет",
+            "люблю ходить под дождём, когда капли постукивают по зонтику",
+            "умею слушать то, что мне говорят",
+            "люблю танцевать, а в свободное время ещё и занимаюсь спортом",
+            "когда слышу стук часов, не могу заснуть",
+            "у меня качественная стерео система",
+            "когда слышу музыку, начинаю отбивать такт ногой или пальцами",
+            "на отдыхе не люблю осматривать памятки архитектуры",
+            "не выношу беспорядка",
+            "не люблю искусственных тканей",
+            "считаю, что атмосфера дома зависит от освещения",
+            "люблю ходить на концерты",
+            "рукопожатие многое может рассказать о человеке",
+            "с удовольствием посещаю музеи и выставки",
+            "серьёзная дискуссия – это увлекательное занятие",
+            "прикосновение может рассказать гораздо больше слов",
+            "в шуме не могу сосредоточиться"
+        ];
+
+        const categories = {
+            audial: [2, 6, 7, 13, 15, 17, 20, 24, 26, 33, 34, 36, 37, 43, 46, 48],
+            visual: [1, 5, 8, 10, 12, 14, 19, 21, 23, 27, 31, 32, 39, 40, 42, 45],
+            kinesthetic: [3, 4, 9, 11, 16, 18, 22, 25, 28, 29, 30, 35, 38, 41, 44, 47]
+        };
+
+        let answers = {};
+
+        function getCategoryForQuestion(questionNumber) {
+            if (categories.audial.includes(questionNumber)) return 'audial';
+            if (categories.visual.includes(questionNumber)) return 'visual';
+            if (categories.kinesthetic.includes(questionNumber)) return 'kinesthetic';
+            return null;
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'audial': 'Аудиал',
+                'visual': 'Визуал',
+                'kinesthetic': 'Кинестетик'
+            };
+            return names[category];
+        }
+
+        function getCategoryClass(category) {
+            const classes = {
+                'audial': 'tag-audial',
+                'visual': 'tag-visual',
+                'kinesthetic': 'tag-kinesthetic'
+            };
+            return classes[category];
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach((question, index) => {
+                const questionNumber = index + 1;
+                const category = getCategoryForQuestion(questionNumber);
+                const categoryName = getCategoryName(category);
+                const categoryClass = getCategoryClass(category);
+
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-text">
+                        <span class="question-number">${questionNumber}.</span>
+                        ${question}
+                        <span class="category-tag ${categoryClass}">${categoryName}</span>
+                    </div>
+                    <div class="answer-buttons">
+                        <button class="answer-btn" onclick="selectAnswer(${questionNumber}, true)" id="yes-${questionNumber}">
+                            Да
+                        </button>
+                        <button class="answer-btn" onclick="selectAnswer(${questionNumber}, false)" id="no-${questionNumber}">
+                            Нет
+                        </button>
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function selectAnswer(questionNumber, answer) {
+            answers[questionNumber] = answer;
+
+            const yesBtn = document.getElementById(`yes-${questionNumber}`);
+            const noBtn = document.getElementById(`no-${questionNumber}`);
+
+            yesBtn.classList.remove('selected-yes');
+            noBtn.classList.remove('selected-no');
+
+            if (answer) {
+                yesBtn.classList.add('selected-yes');
+            } else {
+                noBtn.classList.add('selected-no');
+            }
+        }
+
+        function calculateResults() {
+            const totalQuestions = questions.length;
+            const answeredQuestions = Object.keys(answers).length;
+
+            if (answeredQuestions < totalQuestions) {
+                alert(`Пожалуйста, ответьте на все вопросы! Осталось: ${totalQuestions - answeredQuestions}`);
+                return;
+            }
+
+            const scores = {
+                audial: 0,
+                visual: 0,
+                kinesthetic: 0
+            };
+
+            for (let questionNumber in answers) {
+                if (answers[questionNumber]) {
+                    const category = getCategoryForQuestion(parseInt(questionNumber));
+                    if (category) {
+                        scores[category]++;
+                    }
+                }
+            }
+
+            displayResults(scores);
+        }
+
+        function displayResults(scores) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            const maxScore = 16;
+
+            resultsContainer.innerHTML = `
+                <div class="result-category">
+                    <h3>🎵 Аудиал</h3>
+                    <div class="result-score">${scores.audial} / ${maxScore}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${(scores.audial / maxScore) * 100}%">
+                            ${Math.round((scores.audial / maxScore) * 100)}%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-category">
+                    <h3>👁️ Визуал</h3>
+                    <div class="result-score">${scores.visual} / ${maxScore}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${(scores.visual / maxScore) * 100}%">
+                            ${Math.round((scores.visual / maxScore) * 100)}%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-category">
+                    <h3>🤚 Кинестетик</h3>
+                    <div class="result-score">${scores.kinesthetic} / ${maxScore}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${(scores.kinesthetic / maxScore) * 100}%">
+                            ${Math.round((scores.kinesthetic / maxScore) * 100)}%
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            displayAnswersReview();
+
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('resultsSection').classList.add('active');
+        }
+
+        function displayAnswersReview() {
+            const reviewContainer = document.getElementById('answersReview');
+            reviewContainer.innerHTML = '';
+
+            questions.forEach((question, index) => {
+                const questionNumber = index + 1;
+                const answer = answers[questionNumber];
+                const category = getCategoryForQuestion(questionNumber);
+                const categoryName = getCategoryName(category);
+                const categoryClass = getCategoryClass(category);
+
+                const answerDiv = document.createElement('div');
+                answerDiv.className = `answer-item ${answer ? 'answer-yes' : 'answer-no'}`;
+                answerDiv.innerHTML = `
+                    <div>
+                        <span class="question-number">${questionNumber}.</span>
+                        ${question}
+                        <span class="category-tag ${categoryClass}">${categoryName}</span>
+                    </div>
+                    <span class="answer-badge ${answer ? 'yes' : 'no'}">
+                        ${answer ? 'Да' : 'Нет'}
+                    </span>
+                `;
+                reviewContainer.appendChild(answerDiv);
+            });
+        }
+
+        function restartQuiz() {
+            answers = {};
+            document.getElementById('resultsSection').classList.remove('active');
+            document.getElementById('quizSection').style.display = 'block';
+            renderQuestions();
+            window.scrollTo(0, 0);
+        }
+
+        // Initialize quiz
+        renderQuestions();
+    </script>
+</body>
+</html>
